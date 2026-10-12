@@ -324,23 +324,27 @@ function initApp(){ // initApp очищает контейнер перед по
    const gameContainer = document.getElementById('game');
    gameContainer.innerHTML = '';
 
-   const {form} = createSettingsForm(startGame); // { form } — это деструктуризация объекта. Функция createSettingsForm() 
+   const {form} = createSettingsForm(startGame); // ← startGame — АРГУМЕНТ (для createSettingsForm). { form } — это деструктуризация объекта. Функция createSettingsForm() 
    // возвращает объект: form, inputCols, inputRows, button. То есть она возвращает не один элемент, а целый набор. 
    // НО! «Возьми объект, который вернула функция, и достань из него только свойство form». Так мы сразу получаем нужное свойство — без промежуточных переменных.
    gameContainer.append(form);
 }
 
-function startGame(size){ // startGame очищает контейнер перед показом игры
+function startGame(size){ // size - параметр. startGame очищает контейнер перед показом игры
+   // 1. Создаётся область видимости для startGame
+   // 2. Параметру size присваивается значение аргумента 4
    const gameContainer = document.getElementById('game');
    gameContainer.innerHTML = '';
-   
+   // 3. Выполняется тело функции
    const totalCards = size * size; // пользователь вводит размеры поля, а не количество карточек.
    const pairs = totalCards / 2; // игра «Найди пару» работает с парами, а не с одиночными карточками.
 
    createGame(pairs, size, gameContainer);
+   // 4. Область видимости уничтожается
 }
 
-function createSettingsForm(startGameCallback){ // startGameCallback — имя переменной, под которой эта функция попадает внутрь формы. callback — функция, которую форма должна вызвать при submit
+function createSettingsForm(startGameCallback){ // ← startGameCallback — ПАРАМЕТР. startGameCallback — имя переменной, под которой эта функция попадает внутрь формы.
+//  callback — функция, которую форма должна вызвать при submit
     const form = document.createElement('form');
     const input = document.createElement('input');
     const label = document.createElement('label');
@@ -380,7 +384,7 @@ function createSettingsForm(startGameCallback){ // startGameCallback — имя 
 
     const size = validateSize(Number(input.value)); // Number() — это явное приведение типа. Валидируем значение из input, Number() приводит строку к числу.
     input.value = size; // ← синхронизировать. Синхронизируем поле с валидным значением, если игрок ввёл 5 → в поле станет 4.
-    startGameCallback(size);
+    startGameCallback(size); // ← size — АРГУМЕНТ (для startGameCallback)
     });
 
     return{ // 
