@@ -122,7 +122,11 @@ function createButton(){
 
 
  // ЛОГИКА ДАННЫХ. Компонент данных
-function createGame(pairs, size, gameContainer){ // хранит состояние игры. 
+function createGame(pairs, size, gameContainer){ // Центральная функция (core function) 
+    // Функция, которая содержит основную логику и связывает все остальные. 
+    // createGame — «мозг» игры. Всё остальное — подготовка или обслуживание.
+    // Создаёт игру: DOM, состояние, логику, таймер
+    // хранит состояние игры. 
     // Объявляем createGame, принимает: pairs — число пар, size — размер поля, gameContainer — DOM-контейнер.
     gameContainer.innerHTML = ''; //  очищаем контейнер
     const titleApp = createTitle(); // создаём заголовок через фабрику.
@@ -317,7 +321,7 @@ function validateSize(value){ // утилита независима, переи
     if(!Number.isInteger(value)) return DEFAULT_SIZE; //Number.isInteger - это метод объекта Number. Он проверяет, является ли значение целым числом.
     if(value < MIN_SIZE || value > MAX_SIZE) return DEFAULT_SIZE;
     if(value % 2 !== 0) return DEFAULT_SIZE; 
-    return value; // иначе вернуть value
+    return value; // иначе вернуть value. ← валидное значение
 }
 
 function initApp(){ // initApp очищает контейнер перед показом формы
@@ -395,5 +399,6 @@ function createSettingsForm(startGameCallback){ // ← startGameCallback — П�
     }
 }
 
-initApp();
+initApp(); // entry point - точка входа. Функция, с которой начинается выполнение программы. 
+// Она запускает всё. Но initApp — не главная в смысле логики. Она просто стартует.
 
