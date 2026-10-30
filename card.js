@@ -254,7 +254,21 @@ function createGame(pairs, size, gameContainer){ // Центральная фу�
     if(lock) return; // игра заблокирована — клики игнорируются
     if(cardElement.classList.contains('success')) return; // защита от клика по success‑карточке
     if(cardElement.classList.contains('open')) return;
-    if(firstCard && firstCard.cardElement === cardElement) return;
+    if(firstCard && firstCard.cardElement === cardElement) return; //  защита от клика по той же карточке
+    // Нужно проверить: «та ли это карточка, по которой кликнули сейчас?»
+    // Для этого нужно сравнить две разные сущности:
+    // firstCard.cardElement — DOM-элемент первой карточки (сохранённый в памяти).
+    // cardElement — DOM-элемент текущей карточки (пришёл в аргументе функции).
+
+    // firstCard — переменная замыкания. Хранит объект вида: { cardElement: <li>, number: 5 }
+    // Или null, если первая карточка ещё не выбрана. firstCard && ... — логическое И. Работает так:
+    // если firstCard === null → null (falsy) → всё выражение false → if не сработает → идём дальше;
+    // если firstCard — объект (truthy) → проверяем правую часть.
+    // Зачем проверка на null: если firstCard ещё не установлен, нельзя обращаться к firstCard.cardElement — будет 
+    // TypeError: Cannot read property 'cardElement' of null. Поэтому сначала проверяем, что firstCard существует.
+    // firstCard.cardElement — DOM-элемент первой открытой карточки.
+    // === cardElement — строгое сравнение. cardElement — та карточка, по которой кликнули сейчас.
+    // «Если первая карточка уже выбрана И она — та же самая, по которой кликнули сейчас, — выйти из функции».
 
     cardElement.classList.add('open');
     cardElement.textContent = number;
@@ -309,11 +323,19 @@ function createGame(pairs, size, gameContainer){ // Центральная фу�
     }, FLIP_BACK_DELAY); //Выполни этот код через N миллисекунд, но не сейчас
 } 
      
-    for(let number of shuffled){
+    for(let number of shuffled){ // ключевой момент: в цикле for...of с let каждая итерация создаёт новую переменную. 
+    // Каждая итерация создаёт новые number и card. Замыкание запоминает именно свою.
     const card = createCard(number);
     list.append(card);
-    card.addEventListener('click', () => handleCardClick(card, number));
+    card.addEventListener('click', () => handleCardClick(card, number)); // Стрелочная функция — это callback, который вызовится позже (при клике).
 } 
+// Стрелочная функция () => handleCardClick(card, number):
+// Вложена в цикл for (внешняя область).
+// Использует card и number — переменные внешней области.
+// Вызывается позже — при клике, после того, как цикл завершился.
+// Стрелочная функция запоминает:
+// card — ссылку на DOM-элемент конкретной карточки.
+// number — число этой карточки.
     startTimer();
 }
 
